@@ -89,7 +89,48 @@ public static class Day5
 	public static long PartTwo()
 	{
 		var lines = File.ReadAllLines("Day5.txt");
+		
+		List<long> seeds = lines[0].Split(':')[1].Trim().Split(' ').Select(long.Parse).ToList();
+		var mappings = ParseMappings(lines);
+		
+		//Break the seeds list up into pairs (thanks, AI)
+		var pairs = seeds
+			.Select((value, index) => new {value, index})
+			.GroupBy(x => x.index / 2)
+			.Select(g => g.Select(x => x.value).ToList())
+			.ToList();
 
-		return lines.Length;
+		long totalSeeds = pairs.Sum(x => x[1]);
+		long totalProcessed = 0;
+		long minDist = long.MaxValue;
+		
+		foreach (var pair in pairs)
+		{
+			for (long seed = pair[0]; seed < pair[0] + pair[1]; seed++)
+			{
+				long currentVal = seed;
+				foreach (MapData map in mappings)
+				{
+					foreach (var range in map.Ranges.Where(range => currentVal >= range.SourceStart && currentVal < range.SourceStart + range.Length))
+					{
+						currentVal = range.DestStart + (currentVal - range.SourceStart);
+						break;
+					}
+				}
+				if (currentVal < minDist)
+				{
+					minDist = currentVal;
+				}
+
+				totalProcessed++;
+
+				if (totalProcessed % 10000 == 0)
+				{
+					Console.WriteLine($"Processed {(((double)totalProcessed / (double)totalSeeds)*100.0):0.00}%");
+				}
+			}
+		}
+		
+		return minDist;
 	}
 }
