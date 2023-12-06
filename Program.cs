@@ -1,5 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 
-Console.WriteLine(Day5.PartOne());
-Console.WriteLine(Day5.PartTwo());
+Console.WriteLine(Day6.PartOne());
+Console.WriteLine(Day6.PartTwo());
